@@ -9,5 +9,6 @@ void main(int argc, void** argv[])
 		game.HandleInput();
 		game.Update();
 		game.Render();
+		game.RestartClock(); //restarting our clock
 	}
 }

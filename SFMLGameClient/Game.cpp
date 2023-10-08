@@ -1,14 +1,17 @@
 #include "Game.h"
 
 Game::Game() : m_window("Chapter 2", sf::Vector2u(800, 600)) {
+
 	//setting up class members
 	m_giftTexture.loadFromFile("assets/gift_1.png");
 	m_gift.setTexture(m_giftTexture);
-	m_increment = sf::Vector2i(4, 4);
+	m_increment = sf::Vector2i(40, 40);
 }
 
 Game::~Game() {}
 
+sf::Time Game::getElapsed() { return m_elapsed; }
+void Game::RestartClock() { m_elapsed = m_clock.restart(); }
 Window* Game::GetWindow() { return &m_window; }
 
 void Game::HandleInput() {
@@ -38,7 +41,10 @@ void Game::MoveGift()
 		m_increment.y = -m_increment.y;
 	}
 
-	m_gift.setPosition( m_gift.getPosition().x + m_increment.x, m_gift.getPosition().y + m_increment.y );
+	float fElasped = m_elapsed.asSeconds();
+
+	m_gift.setPosition( m_gift.getPosition().x + (m_increment.x * fElasped), 
+						m_gift.getPosition().y + (m_increment.y * fElasped));
 }
 
 void Game::Render()
