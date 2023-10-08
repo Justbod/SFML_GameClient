@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game() : m_window("Chapter 2", sf::Vector2u(800, 600)) {
+Game::Game() : m_window("Snake", sf::Vector2u(800, 600)), m_snake(m_world.getBLockSize()),m_world(sf::Vector2u(800,600)) {
 
 	//setting up class members
 	m_giftTexture.loadFromFile("assets/gift_1.png");
@@ -10,18 +10,48 @@ Game::Game() : m_window("Chapter 2", sf::Vector2u(800, 600)) {
 
 Game::~Game() {}
 
-sf::Time Game::getElapsed() { return m_elapsed; }
-void Game::RestartClock() { m_elapsed = m_clock.restart(); }
+sf::Time Game::getElapsed() { return m_clock.getElapsedTime(); }
+void Game::RestartClock() { m_elapsed += m_clock.restart().asSeconds(); }
 Window* Game::GetWindow() { return &m_window; }
 
 void Game::HandleInput() {
-	// Input handling.
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)
+		&& m_snake.GetDirection() != Direction::Down)
+	{
+		m_snake.SetDirection(Direction::Up);
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)
+		&& m_snake.GetDirection() != Direction::Up)
+	{
+		m_snake.SetDirection(Direction::Down);
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)
+		&& m_snake.GetDirection() != Direction::Right)
+	{
+		m_snake.SetDirection(Direction::Left);
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
+		&& m_snake.GetDirection() != Direction::Left)
+	{
+		m_snake.SetDirection(Direction::Right);
+	}
 }
 
 void Game::Update()
 {
+	float timestep = 1.0f / m_snake.GetSpeed();
+
+	if (m_elapsed >= timestep) {
+		m_snake.Tick();
+		m_world.Update(m_snake);
+		m_elapsed -= timestep;
+		if (m_snake.HasLost()) {
+			m_snake.Reset();
+		}
+	}
+
 	m_window.Update(); // update window events
-	MoveGift();
+	//MoveGift();
 }
 
 void Game::MoveGift() 
@@ -41,16 +71,20 @@ void Game::MoveGift()
 		m_increment.y = -m_increment.y;
 	}
 
-	float fElasped = m_elapsed.asSeconds();
+	/*float fElasped = m_elapsed.asSeconds();
 
-	m_gift.setPosition( m_gift.getPosition().x + (m_increment.x * fElasped), 
+	m_gift.setPosition( m_gift.getPosition().x + (m_increment.x * fElapsed), 
 						m_gift.getPosition().y + (m_increment.y * fElasped));
+						*/
 }
 
 void Game::Render()
 {
 	m_window.BeginDraw(); //clear
-	m_window.Draw(m_gift);
+	// render here
+	m_world.Render(*m_window.GetRenderWindow());
+	m_snake.Render(*m_window.GetRenderWindow());
+
 	m_window.EndDraw(); //display
 }
 

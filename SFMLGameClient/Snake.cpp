@@ -90,10 +90,11 @@ void Snake::Tick()
 	CheckCollision();
 }
 
-void Snake::Move()
-{
-	if (m_dir == Direction::Left)
-	{
+void Snake::Move() {
+	for (int i = m_snakeBody.size() - 1; i > 0; --i) {
+		m_snakeBody[i].position = m_snakeBody[i - 1].position;
+	}
+	if (m_dir == Direction::Left) {
 		--m_snakeBody[0].position.x;
 	}
 	else if (m_dir == Direction::Right) {
@@ -130,19 +131,20 @@ void Snake::Cut(int l_segments)
 	if (!m_lives) { Lose(); return; }
 }
 
-void Snake::Render(sf::RenderWindow& l_window)
-{
-	if (m_snakeBody.empty()) { return; }
+void Snake::Render(sf::RenderWindow& l_window){
+	if (m_snakeBody.empty()){ return; }
 
 	auto head = m_snakeBody.begin();
 	m_bodyRect.setFillColor(sf::Color::Yellow);
-	m_bodyRect.setPosition(head->position.x * m_size, head->position.y * m_size);
+	m_bodyRect.setPosition(head->position.x * m_size,
+		head->position.y * m_size);
 	l_window.draw(m_bodyRect);
 
 	m_bodyRect.setFillColor(sf::Color::Green);
-	for (auto itr = m_snakeBody.begin() + 1; itr != m_snakeBody.end(); ++itr)
-	{
-		m_bodyRect.setPosition(itr->position.x * m_size, itr->position.y * m_size);
+	for(auto itr = m_snakeBody.begin() + 1; 
+	itr != m_snakeBody.end(); ++itr){
+		m_bodyRect.setPosition(itr->position.x * m_size, 
+			itr->position.y * m_size);
 		l_window.draw(m_bodyRect);
 	}
 }

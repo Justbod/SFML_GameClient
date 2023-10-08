@@ -1,6 +1,8 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "Window.h"
+#include "World.h"
+#include "Snake.h"
 
 class Game
 {
@@ -15,6 +17,9 @@ public:
 
 	sf::Time getElapsed();
 	void RestartClock();
+
+	World m_world;
+	Snake m_snake;
 private:
 	void MoveGift();
 	Window m_window;
@@ -24,5 +29,5 @@ private:
 	sf::Vector2i m_increment;
 
 	sf::Clock m_clock;
-	sf::Time m_elapsed;
+	float m_elapsed;
 };
